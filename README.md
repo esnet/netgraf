@@ -64,10 +64,6 @@ Once the NetGraf installtion is complete, check the PLAY RECAP for any errors.
 
  
 
-<!-- <div style="text-align:center;">
-<img src="https://github.com/esnet/hylia_networkprediction/blob/master/static/example.png" alt="hylia forecast example" />
-</div> -->
-
 
 Please feel free go over the example and tutorial notebooks in 
 the [examples](https://github.com/esnet/daphne/tree/master/NetGraf-Ansible) directory.
@@ -80,12 +76,12 @@ Currently, NetGraf library supports the following Monitoring tools:
 **Supported Network and System Monitoring tools:**
 
 * ntopng
+* netdata
+* collectl
+* prometheus
 * perfSONAR
 * Confluo
-* Netdata
-* collectl
-* tcpdump
-* prometheus
+* zabbix
 * iperf3
 
 
