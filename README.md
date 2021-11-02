@@ -4,7 +4,6 @@
 <p>
 
 # NetGraf: Real-time Network Monitoring Tool that uses Machine Learning
-------------------------------------------------------------------------------
 
 Network performance monitoring collects heterogeneous data such as network flow data to give an overview of network performance, and other metrics, necessary for diagnosing and optimizing service quality. However, due to disparate and heterogeneity, to obtain metrics and visualize entire data from several devices, engineers have to log into multiple dashboards.
 Here we present NetGraf: An end-to-end learning monitoring system that utilizes current monitoring tools and libraries to analyze the data and perform real-time anomaly finding. It can learn network performance baselines,  understand important data features, and can capture a holistic view of the networking infrastructure from a packet,flow, and device-level data by tapping into multiple  opensource solutions. NetGraf uses automated deployment with Ansible to provide real-time visualizations of various network health metrics from different multiple monitoring sources into a single dashboard for valuable insight on the network. With its machine learning libraries, NetGraf can learn baseline performance, and eventually the ability to optimize in a self-learning network. 
