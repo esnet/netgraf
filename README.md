@@ -1,14 +1,9 @@
 
 <p align="center">
-<img src="https://github.com/esnet/daphne/blob/master/NetGraf-Ansible/logo/6.png" width="1000%" height="100%" title="NetGraf logo">
+<img src="https://github.com/esnet/netgraf/blob/main/logo/logo.png" width="1000%" height="100%" title="NetGraf logo">
 <p>
 
 # NetGraf: Real-time Network Monitoring Tool that uses Machine Learning
-
-<!-- %![](https://github.com/esnet/daphne/blob/master/NetGraf-Ansible/static/5.png)
---- -->
-<!-- ![PyPI version](https://badge.fury.io/py/hylia.svg)
-![Supported versions](https://img.shields.io/pypi/pyversions/hylia) -->
 
 
 Building a one-stop dashboard for our machine learning experiments on networks
