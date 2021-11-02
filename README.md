@@ -4,9 +4,6 @@
 <p>
 
 # NetGraf: Real-time Network Monitoring Tool that uses Machine Learning
-
-
-Building a one-stop dashboard for our machine learning experiments on networks
 ------------------------------------------------------------------------------
 
 Network performance monitoring collects heterogeneous data such as network flow data to give an overview of network performance, and other metrics, necessary for diagnosing and optimizing service quality. However, due to disparate and heterogeneity, to obtain metrics and visualize entire data from several devices, engineers have to log into multiple dashboards.
