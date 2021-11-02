@@ -1,0 +1,109 @@
+---
+  ##########################################################################################################
+  #                                         Netgraf Master Playbook                                        #
+  ##########################################################################################################
+  #
+  # YAML documents begin with the document separator ---
+  # The minus in YAML this indicates a list item.
+  # The playbook contains a list of plays, with each play being a dictionary
+
+- name: Install Netgraf all-in-one
+  hosts: all
+  user: cc
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+
+  # Tasks: the list of tasks that will be executed within the play, this section
+  # can also be used for pre and post tasks
+  tasks:
+
+  - name: Install basic tools on Ubuntu
+    apt:
+       name: git,vim,htop
+       state: present
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Install basic tools on CentOS
+    yum:
+       name: git,vim,htop
+       state: present
+    when: ansible_distribution == 'CentOS'
+
+  - name: Installing Nginx
+    apt:
+       name: nginx
+       update_cache: yes
+       state: latest
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Installing Nginx CentOS
+    yum:
+       name: epel-release
+       update_cache: yes
+       state: latest
+    when: ansible_distribution == 'CentOS'
+
+- name: install prometheus
+  hosts: control
+  become: yes
+  roles:
+   - prometheus
+   - grafana
+
+- name: install node-exporter
+  hosts: all
+  become: yes
+  roles:
+  - node-exporter
+
+- name: Install ntopng
+  hosts: all
+  become: yes
+  roles:
+    - ntopng
+
+- name: Install netdata
+  hosts: all
+  become: yes
+  roles:
+    - netdata
+
+- name: Install perfsonar roles
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install requirements
+      command: ansible-galaxy install -r requirements.yml --ignore-errors
+      delegate_to: localhost
+      runonce: true
+
+- name: Install perfSONAR archives
+  hosts: ps_archive
+  roles:
+    - ansible-role-perfsonar-archive
+
+- name: Install perfSONAR MadDash
+  hosts: ps_maddash
+  roles:
+    - ansible-role-perfsonar-maddash
+
+- name: Install perfSONAR testpoints
+  hosts: ps_testpoint
+  roles:
+    - ansible-role-perfsonar-testpoint
+
+- name: Install perfSONAR toolkit
+  hosts: ps_toolkit
+  roles:
+    - ansible-role-perfsonar-toolkit
+
+- name: Install perfSONAR ps-config-publishers
+  hosts: ps_psconfig_publisher
+  roles:
+    - ansible-role-perfsonar-psconfig-publisher
+
+- name: Install perfSONAR ps-config-web-admin
+  hosts: ps_psconfig_web_admin
+  roles:
+    - ansible-role-perfsonar-psconfig-web-admin

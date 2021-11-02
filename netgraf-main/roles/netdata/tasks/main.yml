@@ -1,0 +1,5 @@
+---
+# tasks file for roles/netdata
+- import_tasks: install.yml
+- import_tasks: configure.yml
+#- import_tasks: claim.yml

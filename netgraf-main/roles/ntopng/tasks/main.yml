@@ -1,0 +1,40 @@
+---
+# tasks file for roles/ntopng
+- name: Update apt cache before installing any pre-reqs
+  apt:
+    update_cache: true
+
+- name: Install the required packages
+  apt:
+    name: "{{ req_packages }}"
+    state: present
+
+- name: Add the universe repo
+  apt_repository:
+    repo: deb http://archive.ubuntu.com/ubuntu focal universe
+    state: present
+    update_cache: true
+
+- name: Install ntop repo
+  apt:
+    deb: https://packages.ntop.org/apt/20.04/all/apt-ntop.deb
+
+- name: Update cache after adding new repos
+  apt:
+    update_cache: true
+
+- name: Install ntopng and required packages
+  apt:
+    name: "{{ ntop_packages }}"
+    state: present
+
+- name: Configure ntopng
+  template:
+    src: ntopng.conf.j2
+    dest: /etc/ntopng/ntopng.conf
+
+- name: Start and enable ntopng
+  service:
+    name: ntopng
+    state: started
+    enabled: true

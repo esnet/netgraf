@@ -1,0 +1,105 @@
+---
+  #####################################################
+  #                 Netgraf Master Playbook           #
+  #####################################################
+  #
+  # YAML documents begin with the document separator ---
+  #
+  # The minus in YAML this indicates a list item.
+  # The playbook contains a list of plays, with each play being a dictionary
+
+
+  # Hosts: where our play will run and options it will run with
+  - name: Install Netgraf all-in-one
+    hosts: linux
+    user: cc
+
+  # Vars: variables that will apply to the play, on all target systems
+    vars:
+     ansible_python_interpreter: "/usr/bin/python3"
+
+  # Tasks: the list of tasks that will be executed within the play, this section
+  # can also be used for pre and post tasks
+  - name: install netgraf on ubuntu
+    hosts: ubuntu
+    user: cc
+    vars:
+     ansible_python_interpreter: "/usr/bin/python3"
+
+    tasks:
+      - ping: ~
+
+      - name: Update apt packages
+        apt:
+         update_cache: yes
+        when: ansible_distribution == 'Ubuntu'
+
+      - name: "Installing Vim"
+        apt: pkg=vim     
+     
+      - name: "Installing DNS Utils"
+        apt: pkg=dnsutils 
+ 
+      - name: "Installing Git"
+        apt: pkg=git
+
+      - name: "Install htop"
+        apt: pkg=htop
+     
+      - name: Installing Nginx Ubuntu
+        apt:
+          name: nginx
+          update_cache: yes
+          state: latest
+        when: ansible_distribution == 'Ubuntu'
+
+  - name: install netgraf centos 
+    hosts: centos
+    user: cc
+    vars:
+     ansible_python_interpreter: "/usr/bin/python3"
+   
+    tasks:
+      - ping: ~
+
+      - name: Update yum packages
+        yum:
+         update_cache: yes
+           
+      - name: "Installing Vim"
+        yum: pkg=vim state=installed      
+ 
+      - name: "Installing Git"
+        yum: pkg=git
+
+      - name: "Installing htop"
+        yum: pkg=htop
+  
+  
+      - name: Installing EPEL
+        yum:
+          name: epel-release
+          update_cache: yes
+          state: latest
+        when: ansible_distribution == 'CentOS'
+
+      - name: Installing Nginx CentOS
+        yum:
+          name: epel-release
+          update_cache: yes
+          state: latest
+        when: ansible_distribution == 'CentOS'
+
+        
+
+
+        #      - name: Installing Nginx Ubuntu
+        #apt:
+        #  name: nginx
+        #  update_cache: yes
+        #  state: latest
+        # when: ansible_distribution == 'Ubuntu'
+
+# Handlers: the list of handlers that are executed as a notify key from a task
+# Three dots indicate the end of a YAML document
+...

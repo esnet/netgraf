@@ -1,0 +1,5 @@
+---
+# defaults file for roles/grafana
+
+grafana_admin_password: "netgraf"
+grafana_admin_user: "admin"
