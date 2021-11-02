@@ -92,7 +92,7 @@ Currently, NetGraf library contains the following features:
 **Machine Learning Models:**
 
 * LSTM,
-* SARIMA (For seasonality),
+* SARIMA,
 * Exponential smoothing,
 * ARIMA,
 * Facebook Prophet,
