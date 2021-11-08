@@ -44,7 +44,7 @@ Once the installtion is complete and your environment is all set up, check the v
 
 Clone the repository accordingly from a terminal whilst in your home directory with the following command -:
 
-    git clone https://github.com/esnet/daphne/tree/master/NetGraf-Ansible
+    git clone https://github.com/esnet/netgraf.git
 
     cd netgraf-main 
 
