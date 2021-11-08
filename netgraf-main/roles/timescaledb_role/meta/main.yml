@@ -1,0 +1,16 @@
+---
+
+galaxy_info:
+  author: idealista
+  company: Idealista S.A.U.
+  description: Timescaledb Role
+  min_ansible_version: 2.9.9
+  license: Apache 2.0
+  galaxy-tags:
+    - timeseries
+    - database
+    - postgresql
+  platforms:
+    - name: Debian
+      versions:
+        - buster

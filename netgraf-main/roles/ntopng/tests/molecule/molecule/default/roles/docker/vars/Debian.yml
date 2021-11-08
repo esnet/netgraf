@@ -1,0 +1,8 @@
+---
+
+docker_packages:
+  - iputils-ping
+  - iproute2
+  - daemon
+docker_package_rsyslog: rsyslog
+docker_service_rsyslog: rsyslog

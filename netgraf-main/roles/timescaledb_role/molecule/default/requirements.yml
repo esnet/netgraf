@@ -1,0 +1,4 @@
+---
+- src: idealista.postgresql_role
+  version: 1.4.0
+  name: postgresql

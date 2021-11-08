@@ -1,0 +1,17 @@
+---
+command:
+  check_data_nodes:
+    exit-status: 0
+    exec: sudo -u postgres -H sh -c "psql -U postgres -d timescaledb_db -c '\des+'"
+    stdout:
+    - "/timescaledb-dn/"
+    timeout: 10000
+    skip: false
+
+file:
+  /var/lib/postgresql/.pgpass:
+    exists: true
+  /etc/postgresql/12/main/postgresql.conf:
+    exists: true
+    contains: 
+      - "timescaledb.passfile = '/var/lib/postgresql/.pgpass'"

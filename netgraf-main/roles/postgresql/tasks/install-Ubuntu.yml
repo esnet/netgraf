@@ -1,0 +1,63 @@
+---
+
+- name: PostgreSQL | Ensure required libs are installed
+  apt:
+    name: "{{ pg_required_libs }}"
+    state: present
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Setting more OS specific variables (Debian)
+  set_fact:
+    pg_deb_repo: "{{ pg_deb_repo if pg_deb_repo is defined else __pg_deb_repo }}"
+    pg_deb_key: "{{ pg_deb_key if pg_deb_key is defined else __pg_deb_key }}"
+  tags: postgresql,postgresql-install
+
+- block:
+    - name: PostgreSQL | Be sure postgresql.org key is present
+      apt_key:
+        url: "{{ pg_deb_key }}"
+        state: present
+    - name: PostgreSQL | Be sure postgresql.org repo packages configured (deb)
+      apt_repository:
+        repo: "{{ pg_deb_repo }}"
+        state: present
+        filename: 'postgresqldotorg'
+    - name: PostgreSQL | Be sure postgresql packages are installed (apt)
+      apt:
+        name: "{{ pg_packages }}"
+        state: present
+        update_cache: true
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Ensure needed directories exist
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ pg_user }}"
+    group: "{{ pg_group }}"
+    mode: 0700
+  with_items:
+    - "{{ pg_config_directory }}"
+    - "{{ pg_data_directory }}"
+    - "{{ pg_log_directory }}"
+  notify: "restart postgresql"
+  tags: postgresql,postgresql-install
+
+# Soft fail if cluster exists
+#
+- name: PostgreSQL | Init database (Debian)
+  command: "{{ pg_usr_path }}/bin/initdb -D {{ pg_data_directory }}"
+  register: initdb_result
+  become: true
+  become_user: "{{ pg_user }}"
+  failed_when: not  "'not empty' in initdb_result.stdout"
+  changed_when: not  "'not empty' in initdb_result.stdout"
+  tags: postgresql,postgresql-install
+
+
+- name: PostgreSQL | Be sure postgresqld is running and enabled
+  service:
+    name: "{{ pg_service }}"
+    state: "{{ pg_service_state }}"
+    enabled: "{{ pg_service_enabled }}"
+  tags: postgresql,postgresql-install

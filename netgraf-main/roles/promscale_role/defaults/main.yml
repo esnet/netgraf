@@ -1,0 +1,67 @@
+---
+
+## General
+# Version
+promscale_version: 0.3.0
+promscale_release_system: Linux_x86_64
+
+# Package URL
+promscale_release_name: "promscale_{{ promscale_version }}_{{ promscale_release_system }}"
+promscale_url: "https://github.com/timescale/promscale/releases/download/{{ promscale_version }}/{{ promscale_release_name }}"
+
+# Set true to force the download and installation of the binary
+promscale_force_reinstall: false
+
+# Installation path
+promscale_download_path: /usr/src
+promscale_root_path: /opt/promscale
+promscale_bin_path: "{{ promscale_root_path }}/bin"
+promscale_skeleton_paths:
+  - "{{ promscale_bin_path }}"
+promscale_exec_name: promscale
+
+# Binary installations also need to make sure the execute_maintenance() procedure on a regular basis (e.g. via cron).
+# We recommend executing it every 30 minutes.
+# This is necessary to execute maintenance tasks such as enforcing data retention policies according to the configured policy.
+promscale_maintenance_script_template_file: prom-execute-maintenance.sh.j2
+promscale_maintenance_script: prom-execute-maintenance.sh
+promscale_config_template_file: "{{ playbook_dir }}/templates/promscale/config.yml.j2"
+promscale_config_file: config.yml
+promscale_cron_job:
+  user: root
+  minute: "*/30"
+  hour: "*"
+  day: "*"
+  weekday: "*"
+  month: "*"
+
+## Service options
+# Documentation
+promscale_documentation_link: "https://github.com/timescale/promscale#documentation"
+
+# Owner
+promscale_user: promscale
+promscale_group: promscale
+
+# Maximum number of files limit
+promscale_max_files: 32768
+
+# Start on boot
+promscale_service_enabled: True
+# Current state: started, stopped
+promscale_service_state: started
+
+# Logs
+# If wanted to output the logs to a file define the following variable
+# More information at https://www.freedesktop.org/software/systemd/man/systemd.exec.html#StandardOutput=
+# promscale_log_file: path_of_the_file
+promscale_log_path: /var/log/promscale
+promscale_log_file: "{{ promscale_log_path }}/promscale.log"
+promscale_log_output: "{% if promscale_log_file is defined %} file:{{ promscale_log_file }} {% else %} journal {% endif %}"
+
+# CLI Flags, more info at https://github.com/timescale/promscale/blob/master/docs/cli.md
+promscale_db_ssl_mode: allow
+promscale_options:
+  - "config {{ promscale_root_path }}/{{ promscale_config_file }}"
+
+promscale_private_tmp: true

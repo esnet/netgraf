@@ -1,0 +1,48 @@
+---
+
+- name: PostgreSQL | Gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+  tags: postgresql,includes
+
+- name: PostgreSQL | Setting OS specific variables (I)
+  set_fact:
+    pg_major_release: "{{ pg_major_release if pg_major_release is defined else __pg_major_release }}"
+  tags: postgresql,includes
+
+- name: PostgreSQL | Gather pg 9.6 specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-pg-9.6.yml"
+  when: pg_major_release == "9.6"
+  tags: postgresql,includes
+
+- name: PostgreSQL | Setting OS specific variables (II)
+  set_fact:
+    pg_packages: "{{ pg_packages if pg_packages is defined else __pg_packages }}"
+    pg_config_directory: "{{ pg_config_directory if pg_config_directory is defined else __pg_config_directory }}"
+    pg_data_directory: "{{ pg_data_directory if pg_data_directory is defined else __pg_data_directory }}"
+    pg_log_directory: "{{ pg_log_directory if pg_log_directory is defined else __pg_log_directory }}"
+  tags: postgresql,includes
+
+- name: PostgreSQL | Install postgresql
+  include_tasks: "install-{{ ansible_distribution }}.yml"
+  tags: postgresql,postgresql-install
+
+#- name: PostgreSQL | Configure postgresql
+#  include_tasks: config.yml
+#  tags: postgresql,postgresql-config
+
+- name: PostgreSQL | OS tuning
+  include_tasks: os-tuning.yml
+  when: pg_os_tuning
+  tags: postgresql,postgresql-config
+
+- name: PostgreSQL | Manage Users
+  include_tasks: users.yml
+  tags: postgresql,postgresql-config,postgresql-manage-users
+
+- name: PostgreSQL | Manage Databases
+  include_tasks: databases.yml
+  tags: postgresql,postgresql-config,postgresql-manage-databases

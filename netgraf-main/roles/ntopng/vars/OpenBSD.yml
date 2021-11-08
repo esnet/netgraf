@@ -1,0 +1,9 @@
+---
+__ntopng_service: ntopng
+__ntopng_package: ntopng
+__ntopng_extra_packages: []
+__ntopng_config_dir: /etc/ntopng
+__ntopng_user: _ntopng
+__ntopng_group: _ntopng
+__ntopng_db_dir: /var/db/ntopng
+__ntopng_log_dir: "{{ __ntopng_db_dir }}"

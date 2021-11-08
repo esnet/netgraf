@@ -1,0 +1,7 @@
+---
+
+- name: restart promscale
+  systemd:
+    name: promscale
+    state: restarted
+  when: promscale_service_state != 'stopped'

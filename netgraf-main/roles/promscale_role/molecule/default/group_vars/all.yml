@@ -1,0 +1,28 @@
+---
+
+# Timescaledb Role
+timescaledb_pg_major: 12
+timescaledb_version: "2-2.5.0"
+timescaledb_pg_extension_version: "2.5.0"
+timescaledb_pg_user: "postgres"
+timescaledb_pg_database: "timescaledb_db"
+
+timescaledb_pg_database_owner: "timescaledb_testuser"
+timescaledb_private_tmp: false
+
+timescaledb_pg_database_owner_password: "supersecure"
+
+# Postgresql Role
+pg_user: "postgres"
+pg_major_release: "{{ timescaledb_pg_major }}"
+
+pg_users:
+  - name: "{{ timescaledb_pg_database_owner }}"
+    password: "{{ timescaledb_pg_database_owner_password }}"
+    role_attr_flags: CREATEROLE
+pg_databases:
+  - name: "{{ timescaledb_pg_database }}"
+    owner: "{{ timescaledb_pg_database_owner }}"
+
+# Promscale Role
+promscale_private_tmp: false

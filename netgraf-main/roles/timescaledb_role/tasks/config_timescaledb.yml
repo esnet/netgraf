@@ -1,0 +1,41 @@
+---
+- name: TIMESCALEDB | Check if extension is already installed.
+  become: yes
+  become_user: postgres
+  postgresql_info:
+    db: "{{ timescaledb_pg_database }}"
+    filter: databases
+  ignore_errors: yes
+  register: extension_installed_check
+
+- name: TIMESCALEDB | Prepare handlers
+  command: /bin/true
+  changed_when: true
+  notify: timescaledb pg restart
+  when: extension_installed_check.failed or extension_installed_check.databases[ timescaledb_pg_database ].extensions['timescaledb'] is undefined
+
+- name: TIMESCALEDB | Flush handlers
+  meta: flush_handlers
+
+- name: TIMESCALEDB | Wait for postgresql to start up
+  wait_for:
+    port: "{{ timescaledb_pg_port }}"
+    timeout: 60
+
+- name: TIMESCALEDB | Create timescaledb extension
+  become: true
+  become_user: "{{ timescaledb_pg_user }}"
+  postgresql_ext:
+    name: timescaledb
+    db: "{{ timescaledb_pg_database }}"
+    login_user: "{{ timescaledb_pg_user }}"
+    version: "{{ timescaledb_pg_extension_version | default(omit) }}"
+
+- name: TIMESCALEDB | Setup timescaledb data nodes
+  include_tasks: config_data_node.yml
+  with_items: "{{ timescaledb_multinode_data_nodes }}"
+  when: timescaledb_multinode_enabled and timescaledb_multinode_access_node_resolution_method == timescaledb_multinode_access_node
+
+- name: TIMESCALEDB | Setup timescaledb multinode password authentication
+  include_tasks: config_password_authentication.yml
+  when: timescaledb_multinode_enabled and timescaledb_multinode_password_authentication_enabled and timescaledb_multinode_access_node_resolution_method == timescaledb_multinode_access_node

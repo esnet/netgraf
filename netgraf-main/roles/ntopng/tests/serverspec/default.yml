@@ -1,0 +1,80 @@
+---
+- hosts: localhost
+  roles:
+    - role: trombik.apt_repo
+      when:
+        - ansible_os_family == 'Debian'
+    - role: trombik.redhat_repo
+      when:
+        - ansible_os_family == 'RedHat'
+    - role: trombik.redis
+    - role: ansible-role-ntopng
+  pre_tasks:
+    - name: Dump all hostvars
+      debug:
+        var: hostvars[inventory_hostname]
+  post_tasks:
+    - name: List all services (systemd)
+      # workaround ansible-lint: [303] service used in place of service module
+      shell: "echo; systemctl list-units --type service"
+      changed_when: false
+      when:
+        - ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+    - name: list all services (FreeBSD service)
+      # workaround ansible-lint: [303] service used in place of service module
+      shell: "echo; service -l"
+      changed_when: false
+      when:
+        - ansible_os_family == 'FreeBSD'
+  vars:
+    redis_config:
+      databases: 16
+      save 900: 1
+    os_ntopng_flags:
+      OpenBSD: ""
+      FreeBSD: "ntopng_flags='{{ ntopng_config_file }}'"
+      Debian: ""
+      RedHat: ""
+    ntopng_flags: "{{ os_ntopng_flags[ansible_os_family] }}"
+    ntopng_extra_groups:
+      - bin
+    os_ntopng_extra_packages:
+      FreeBSD: []
+      OpenBSD: []
+      Debian:
+        - pfring
+        - ntopng-data
+      RedHat:
+        - pfring
+        - ntopng-data
+    ntopng_extra_packages: "{{ os_ntopng_extra_packages[ansible_os_family] }}"
+    ntopng_config: |
+      {% if ansible_os_family == 'Debian' %}
+      -e=
+      --data-dir={{ ntopng_db_dir }}
+      --user={{ ntopng_user }}
+      {% endif %}
+      --http-port={{ ansible_default_ipv4['address'] }}:3001
+      --disable-login=1
+    apt_repo_keys_to_add:
+      - http://packages.ntop.org/apt-stable/ntop.key
+    apt_repo_to_add:
+      - deb http://packages.ntop.org/apt-stable/{{ ansible_distribution_version }}/ x64/
+      - deb http://packages.ntop.org/apt-stable/{{ ansible_distribution_version }}/ all/
+    redhat_repo_extra_packages:
+      - epel-release
+    redhat_repo:
+      epel:
+        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_architecture }}"
+        gpgcheck: yes
+        enabled: yes
+      ntop:
+        baseurl: http://packages.ntop.org/centos-stable/$releasever/$basearch/
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: http://packages.ntop.org/centos-stable/RPM-GPG-KEY-deri
+      ntop_noarch:
+        baseurl: http://packages.ntop.org/centos-stable/$releasever/noarch/
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: http://packages.ntop.org/centos-stable/RPM-GPG-KEY-deri

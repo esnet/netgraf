@@ -1,0 +1,45 @@
+---
+
+## Timescaledb Role
+
+timescaledb_pg_major: 12
+timescaledb_pg_database: "timescaledb_db"
+
+timescaledb_pg_database_owner: "timescaledb_testuser"
+timescaledb_pg_database_owner_password: "supersecure"
+timescaledb_private_tmp: false
+
+# Postgresql Role
+pg_user: "postgres"
+pg_major_release: "{{ timescaledb_pg_major }}"
+
+pg_handler_on_config_change: "restart postgresql"
+pg_listen_addresses: "*"
+pg_hba_declarations:
+  - "host all all 0.0.0.0/0 trust"
+
+pg_users:
+  - name: "{{ timescaledb_pg_database_owner }}"
+    password: "{{ timescaledb_pg_database_owner_password }}"
+pg_databases:
+  - name: "{{ timescaledb_pg_database }}"
+    owner: "{{ timescaledb_pg_database_owner }}"
+
+pg_max_prepared_transactions: 150
+pg_enable_partitionwise_aggregate: on
+
+timescaledb_pg_conf:
+  - shared_preload_libraries: "'timescaledb'"
+  - timescaledb.telemetry_level: "off"
+  - timescaledb.passfile: "'{{ timescaledb_multinode_pgpass_path }}/.pgpass'"
+
+# Timescaledb multinode defaults
+timescaledb_multinode_enabled: true
+timescaledb_multinode_access_node: "timescaledb-an"
+timescaledb_multinode_data_nodes:
+  - timescaledb-dn
+timescaledb_multinode_password_authentication_enabled: true
+
+timescaledb_deb_key: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+timescaledb_deb_repo: timescale/timescaledb-ppa
+timescaledb_release_name: timescaledb-postgresql-12

@@ -1,0 +1,6 @@
+---
+file:
+  /etc/postgresql/12/main/postgresql.conf:
+    exists: true
+    contains: 
+      - "shared_preload_libraries = 'timescaledb'"

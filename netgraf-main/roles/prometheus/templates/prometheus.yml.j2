@@ -8,5 +8,15 @@
 {% for server in groups[prometheus_node_exporter_group] %}
     - {{ server }}:9100
 {% endfor %}
+- job_name: 'netdata-scrape'
+  metrics_path: '/api/v1/allmetrics'
+  params:
+    format: [prometheus]
+  honor_labels: true
+  static_configs:
+  - targets:
+{% for server in groups[prometheus_node_exporter_group] %}
+    - {{ server }}:19999
+{% endfor %}  
 {% endif %}
 

@@ -1,0 +1,29 @@
+---
+
+pg_basename_version: "{{ pg_major_release }}"
+pg_service: "postgresql"
+pg_basename: "postgresql-{{ pg_basename_version }}"
+__pg_deb_repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+__pg_deb_key: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+__pg_packages:
+   - "{{ pg_basename }}"
+# If you want to set the minor release:
+#  - "{{ pg_basename }}={{ pg_major_release }}.{{ pg_minor_release }}"
+#  And, for example:
+# pg_minor_release: "5-1.pgdg90+1"
+
+pg_usr_path: "/usr/lib/postgresql/{{ pg_major_release }}"
+__pg_config_directory: "/etc/postgresql/{{ pg_basename_version }}/main"
+__pg_data_directory: "/var/lib/postgresql/{{ pg_basename_version }}/main"
+__pg_log_directory: "/var/log/postgresql"
+
+pg_config_files:
+   - environment
+   - pg_ctl.conf
+   - pg_hba.conf
+   - pg_ident.conf
+   - postgresql.conf
+   - start.conf
+
+pg_required_libs:
+   - python-psycopg2

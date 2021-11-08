@@ -1,0 +1,42 @@
+---
+
+- name: PROMSCALE | Add config file
+  template:
+    src: "{{ promscale_config_template_file }}"
+    dest: "{{ promscale_root_path }}/{{ promscale_config_file }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    mode: 0644
+  tags:
+    - promscale_configure
+
+- name: PROMSCALE | Add maintenance script
+  template:
+    src: "{{ promscale_maintenance_script_template_file }}"
+    dest: "{{ promscale_root_path }}/{{ promscale_maintenance_script }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    mode: 0711
+  tags:
+    - promscale_configure
+
+- name: PROMSCALE | Ensure cron package is installed
+  apt:
+    pkg: cron
+  tags:
+    - crontab
+    - promscale_configure
+
+- name: PROMSCALE | Maintenance cron job
+  cron:
+    name: Maintenance job
+    job: "{{ promscale_root_path }}/{{ promscale_maintenance_script }}"
+    minute: "{{ promscale_cron_job.minute }}"
+    hour: "{{ promscale_cron_job.hour }}"
+    day: "{{ promscale_cron_job.day }}"
+    weekday: "{{ promscale_cron_job.weekday }}"
+    month: "{{ promscale_cron_job.month }}"
+    user: "{{ promscale_cron_job.user }}"
+  tags:
+    - crontab
+    - promscale_configure

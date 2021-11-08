@@ -1,0 +1,4 @@
+- name: timescaledb pg restart
+  systemd:
+    name: postgresql
+    state: restarted

@@ -1,0 +1,2 @@
+---
+__pg_setup_command: "{{ pg_usr_path }}/bin/postgresql{{ pg_basename_version }}-setup"

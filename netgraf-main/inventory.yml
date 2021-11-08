@@ -1,0 +1,21 @@
+all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  children:
+    control:
+      hosts:
+        129.114.109.96
+    others:
+     ubuntu:
+      hosts:
+        129.114.109.98:
+       #129.114.108.217:
+       #129.114.108.152:
+       #129.114.108.242:
+        #10.52.2.82:
+        #10.52.3.13:
+        #10.52.0.191:
+     centos:
+      hosts:
+        129.114.108.231:
+       #129.114.109.118:

@@ -1,0 +1,29 @@
+---
+
+- name: PostgreSQL | Manage Users
+  postgresql_user:
+    ca_cert: "{{ item.cacert | default(omit) }}"
+    conn_limit: "{{ item.conn_limit | default(omit) }}"
+    db: "{{ item.db | default(omit) }}"
+    encrypted: "{{ item.encrypted | default(omit) }}"
+    expires: "{{ item.expires | default(omit) }}"
+    fail_on_user: "{{ item.fail_on_user | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    login_host: "{{ item.login_host | default('localhost') }}"
+    login_password: "{{ item.login_password | default(omit) }}"
+    login_unix_socket: "{{ item.login_unix_socket | default('/var/run/postgresql') }}"
+    login_user: "{{ item.login_user | default(pg_user) }}"
+    name: "{{ item.name }}"
+    no_password_changes: "{{ item.no_password_changes | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+    port: "{{ item.port | default(omit) }}"
+    priv: "{{ item.priv | default(omit) }}"
+    role_attr_flags: "{{ item.role_attr_flags | default(omit) }}"
+    session_role: "{{ item.session_role | default(omit) }}"  # noqa 206
+    ssl_mode: "{{ item.ssl_mode | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ pg_users }}"
+  no_log: "{{ pg_users_no_log }}"
+  become: true
+  become_user: "{{ pg_user }}"
+  tags: postgresql,postgresql-config,postgresql-manage-users

@@ -1,0 +1,19 @@
+---
+
+- name: Create a digest
+  set_fact:
+    now: "{{ ansible_date_time.epoch | hash('sha1') }}"
+
+- name: Create a file that contains the first digest
+  copy:
+    content: "{{ now }}"
+    dest: /tmp/digest1
+
+- name: Create another digest
+  set_fact:
+    now: "{{ ansible_date_time.iso8601 | hash('sha1') }}"
+
+- name: Create a file that contains the second digest
+  copy:
+    content: "{{ now }}"
+    dest: /tmp/digest2

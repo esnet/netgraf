@@ -1,0 +1,21 @@
+---
+name: Publish to galaxy
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: galaxy
+        uses: robertdebock/galaxy-action@1.1.0
+        with:
+          # add GALAXY_API_KEY to repository secrets. the API key can be found
+          # at:
+          # https://galaxy.ansible.com/me/preferences
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}

@@ -13,4 +13,4 @@
     url: http://localhost:9090/-/reload
     method: POST
     status_code: 200
-
+  ignore_errors: true

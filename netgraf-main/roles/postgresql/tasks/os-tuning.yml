@@ -1,0 +1,12 @@
+---
+
+- name: PostgreSQL | max fs files
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    state: present
+    reload: true
+  with_dict: "{{ pg_os_tuning_parameters }}"
+  when: pg_os_tuning_parameters is defined
+  tags: postgresql,postgresql-os-config

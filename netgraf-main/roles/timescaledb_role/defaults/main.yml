@@ -1,0 +1,39 @@
+---
+## General
+
+# Version
+timescaledb_version: "2-2.1.0"
+timescaledb_pg_extension_version: "2.5.0"
+timescaledb_pg_major: 12
+timescaledb_pg_port: 5432
+
+# Package
+## Available versions https://packagecloud.io/timescale/timescaledb
+timescaledb_deb_repo: "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ {{ ansible_distribution_release }} main"
+timescaledb_deb_key: "https://packagecloud.io/timescale/timescaledb/gpgkey"
+timescaledb_release_name: "timescaledb-2-postgresql-{{ timescaledb_pg_major }}"
+
+timescaledb_private_tmp: true
+timescaledb_autotune: false
+
+# Posgtresql config
+timescaledb_pg_user: "postgres"  # User running postgresql.
+timescaledb_pg_group: "postgres"
+timescaledb_pg_database: "timescaledb"  # Database in which to install timescaledb extension.
+timescaledb_pg_conf:
+  - shared_preload_libraries: "'timescaledb'"
+  - timescaledb.telemetry_level: "off"
+#  - timescaledb.passfile: "'{{ timescaledb_multinode_pgpass_path }}/.pgpass'" # Mandatory if you want to enable password authentication in a multi-node installation
+
+# Timescaledb multinode defaults
+timescaledb_multinode_enabled: false
+timescaledb_multinode_access_node: ""
+timescaledb_multinode_data_nodes: []
+
+# Timescaledb multinode authentication
+timescaledb_multinode_password_authentication_enabled: false
+timescaledb_multinode_pgpass_template_file: .pgpass.j2
+timescaledb_multinode_pgpass_path: /var/lib/postgresql
+
+## We use this variable to avoid fqdn/ptr resolution incompatibilities.
+timescaledb_multinode_access_node_resolution_method: "{{ inventory_hostname }}" # ansible_hosntame, ansible_nodename, inventory_hostname, etc.

@@ -1,0 +1,37 @@
+---
+- name: TIMESCALEDB | Check if {{ item }} data node is present
+  become: true
+  become_user: "{{ timescaledb_pg_user }}"
+  postgresql_query:
+    login_user: "{{ timescaledb_pg_user }}"
+    db: "{{ timescaledb_pg_database }}"
+    query: |
+      SELECT s.srvname AS "Name"
+      FROM pg_catalog.pg_foreign_server s
+      WHERE s.srvname = %(data_node_name)s
+      ORDER BY 1;
+    named_args:
+      data_node_name: "{{ item }}"
+  register: data_node_check
+
+- name: TIMESCALEDB | Setup {{ item }} data node
+  become: true
+  become_user: "{{ timescaledb_pg_user }}"
+  postgresql_query:
+    login_user: "{{ timescaledb_pg_user }}"
+    db: "{{ timescaledb_pg_database }}"
+    query: "SELECT add_data_node('{{ item }}', host => '{{ item }}');"
+    autocommit: true  # This query can't be run inside a transaction block
+    password: "{{ timescaledb_pg_user_password | default(omit) }}"
+  when: data_node_check.rowcount == 0
+
+- name: TIMESCALEDB | Setup {{ item }} data node privileges
+  become: true
+  become_user: "{{ timescaledb_pg_user }}"
+  postgresql_query:
+    login_user: "{{ timescaledb_pg_user }}"
+    db: "{{ timescaledb_pg_database }}"
+    query: "GRANT USAGE ON FOREIGN SERVER \"{{ item }}\" TO {{ timescaledb_pg_database_owner }};"
+    autocommit: true  # This query can't be run inside a transaction block
+    password: "{{ timescaledb_pg_user_password | default(omit) }}"
+  when: data_node_check.rowcount == 0

@@ -1,0 +1,7 @@
+---
+
+- name: Side effects
+  hosts: all
+  roles:
+    - role: side_effect
+  vars:

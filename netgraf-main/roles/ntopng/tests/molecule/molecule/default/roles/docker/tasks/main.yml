@@ -1,0 +1,32 @@
+---
+
+- name: "Include variables from {{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install docker_packages
+  package:
+    name: "{{ docker_packages }}"
+    state: present
+  when:
+    - ansible_os_family != 'FreeBSD'
+    - ansible_os_family != 'OpenBSD'
+
+- name: Install docker_extra_packages
+  package:
+    name: "{{ docker_extra_packages }}"
+    state: present
+  when:
+    - ansible_os_family != 'FreeBSD'
+    - ansible_os_family != 'OpenBSD'
+
+- name: Create vagrant user
+  user:
+    name: vagrant
+
+- name: Start rsyslog
+  service:
+    name: "{{ docker_service_rsyslog }}"
+    state: started
+  when:
+    - ansible_os_family != 'FreeBSD'
+    - ansible_os_family != 'OpenBSD'

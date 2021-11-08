@@ -1,0 +1,10 @@
+---
+__ntopng_service: ntopng
+__ntopng_package: ntopng
+__ntopng_extra_packages:
+  - net-tools
+__ntopng_config_dir: /etc/ntopng
+__ntopng_user: ntopng
+__ntopng_group: ntopng
+__ntopng_db_dir: /var/lib/ntopng
+__ntopng_log_dir: /var/log/ntopng

@@ -1,0 +1,5 @@
+---
+- name: Converge
+  hosts: promscale_group
+  roles:
+    - role: promscale_role

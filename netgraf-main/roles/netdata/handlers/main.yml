@@ -1,6 +1,2 @@
 ---
 # handlers file for roles/netdata
-- name: Restart Netdata
-  service:
-    name: netdata
-    state: restarted

@@ -1,0 +1,51 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+driver:
+  name: docker
+lint: |
+  yamllint .
+  ansible-lint .
+platforms:
+  - name: timescaledb-an
+    groups:
+      - timescaledb_access_nodes
+      - timescaledb
+    image: ${MOLECULE_DISTRO:-debian:buster-slim}
+    networks:
+      - name: test
+    privileged: false
+    capabilities:
+      - SYS_ADMIN
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    stop_signal: 'RTMIN+3'
+  - name: timescaledb-dn
+    groups:
+      - timescaledb_data_nodes
+      - timescaledb
+    image: ${MOLECULE_DISTRO:-debian:buster-slim}
+    networks:
+      - name: test
+    privileged: false
+    capabilities:
+      - SYS_ADMIN
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    volumes:
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: '/lib/systemd/systemd'
+    stop_signal: 'RTMIN+3'
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

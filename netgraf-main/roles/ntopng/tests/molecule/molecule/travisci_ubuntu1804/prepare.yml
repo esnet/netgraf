@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install required packages
+      raw: apt-get install -y --no-install-recommends apt-utils rsyslog systemd systemd-cron sudo
+      become: false
+      changed_when: false

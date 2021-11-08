@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  roles:
+    - ansible-role-apt_repo
+  vars:
+    apt_repo_keys_to_add:
+      - https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      - https://repos.influxdata.com/influxdb.key
+    dist_apt_repo_to_add:
+      Debian:
+        - deb https://artifacts.elastic.co/packages/7.x/apt stable main
+      Devuan:
+        - deb https://artifacts.elastic.co/packages/7.x/apt stable main
+        - "deb https://repos.influxdata.com/debian {{ apt_repo_codename_devuan_to_debian[ansible_distribution_release] }} stable"
+      Ubuntu:
+        - deb https://artifacts.elastic.co/packages/7.x/apt stable main
+        - ppa:ubuntuhandbook1/audacity
+
+    apt_repo_to_add: "{{ dist_apt_repo_to_add[ansible_distribution] }}"
+    apt_repo_enable_apt_transport_https: True

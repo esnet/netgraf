@@ -1,0 +1,29 @@
+---
+
+- assert:
+    that: "item  is search('^deb(?:-src)?.*')"
+    msg: "cannot add repository `{{ item }}`. it must start with `deb(?:-src)?`. also, you cannot add a PPA repository, which is designed for Ubuntu, not for {{ ansible_distribution }}"
+  with_items: "{{ apt_repo_to_add }}"
+
+- name: Install apt_repo_required_packages
+  apt:
+    name: "{{ apt_repo_required_packages }}"
+    state: present
+
+- name: Install apt-transport-https
+  apt:
+    name: apt-transport-https
+    state: present
+  when: apt_repo_enable_apt_transport_https
+
+- name: Add keys for repositories
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  with_items: "{{ apt_repo_keys_to_add }}"
+
+- name: Add apt repositories (deb, deb-src)
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items: "{{ apt_repo_to_add }}"

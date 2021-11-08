@@ -1,5 +1,19 @@
 ---
-# tasks file for roles/netdata
-- import_tasks: install.yml
-- import_tasks: configure.yml
-#- import_tasks: claim.yml
+# tasks file for roles/prometheus
+#- name: Install Netdata
+#  become: yes
+#  become_method: sudo
+#  tasks:
+- name: Download the installation script
+  get_url:
+    url: https://my-netdata.io/kickstart.sh
+    dest: ~/kickstart.sh
+    mode: +x
+
+- name: Install Netdata
+  command: ~/kickstart.sh --dont-wait
+
+- name: Cleanup installation script
+  file:
+    path: ~/kickstart.sh
+    state: absent

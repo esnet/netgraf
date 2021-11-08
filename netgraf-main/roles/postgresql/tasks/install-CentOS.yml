@@ -1,0 +1,76 @@
+---
+
+- name: PostgreSQL | Ensure required libs are installed
+  yum:
+    name: "{{ pg_required_libs }}"
+    state: present
+  changed_when: false
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Setting more OS specific variables (RHEL)
+  set_fact:
+    pg_url_rpm: "{{ pg_url_rpm if pg_url_rpm is defined else __pg_url_rpm }}"
+    pg_setup_command: "{{ pg_setup_command if pg_setup_command is defined else __pg_setup_command }}"
+  tags: postgresql,postgresql-install
+
+- block:
+    - name: PostgreSQL | Be sure postgresql repo packages configured (yum)
+      yum:
+        name: "{{ pg_url_rpm }}"
+        state: present
+    - name: PostgreSQL | Disable postgresql module (dnf)
+      command:
+        cmd: dnf -qyv module disable postgresql
+      when: ansible_distribution_major_version == '8'
+      register: dnf_result
+      changed_when: not ('Nothing to do' in dnf_result.stdout)
+    - name: PostgreSQL | Be sure postgresql is installed (yum)
+      yum:
+        name: "{{ pg_packages }}"
+        state: present
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Ensure needed directories exist
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ pg_user }}"
+    group: "{{ pg_group }}"
+    mode: 0700
+  with_items:
+    - "{{ pg_config_directory }}"
+    - "{{ pg_data_directory }}"
+    - "{{ pg_log_directory }}"
+  notify: "restart postgresql"
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Ensure systemd unit configuration
+  template:
+    src: "{{ pg_systemd_templates_path }}/postgresql.service.j2"
+    dest: "/usr/lib/systemd/system/postgresql-{{ pg_major_release }}.service"
+    owner: root
+    group: root
+    mode: 0755
+  notify: "{{ pg_handler_on_config_change }}"
+
+- name: PostgreSQL | Systemd reload units
+  systemd:
+    daemon_reload: true
+  tags: postgresql,postgresql-install
+# Soft fail if cluster exists
+#
+- name: PostgreSQL | Init database (RHEL)
+  command: "{{ pg_setup_command }} initdb"
+  environment:
+    PGSETUP_INITDB_OPTIONS: "{{ pg_initdb_options if pg_initdb_options is defined else __pg_initdb_options }}"
+  register: initdb_result
+  failed_when: (initdb_result.rc != 0) and ( not ('not empty' in initdb_result.stdout))
+  changed_when: (initdb_result.rc == 0) and ( not ('not empty' in initdb_result.stdout))
+  tags: postgresql,postgresql-install
+
+- name: PostgreSQL | Be sure postgresqld is running and enabled
+  service:
+    name: "{{ pg_service }}"
+    state: "{{ pg_service_state }}"
+    enabled: "{{ pg_service_enabled }}"
+  tags: postgresql,postgresql-install

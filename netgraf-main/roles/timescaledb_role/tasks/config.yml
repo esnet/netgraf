@@ -1,0 +1,39 @@
+---
+- name: TIMESCALEDB | Autotune
+  when: timescaledb_autotune
+  block:
+  - name: TIMESCALEDB | Prepare timescaledb-tune
+    shell: "md5sum /etc/postgresql/{{ timescaledb_pg_major }}/main/postgresql.conf | awk '{ print $1 }'"
+    register: pg_config_checksum
+    changed_when: false
+
+  - name: TIMESCALEDB | Run timescaledb-tune
+    command: "timescaledb-tune --quiet --yes"
+    changed_when: false
+
+  - name: TIMESCALEDB | Remove tune fingerprint # This is in order to verify idempotency
+    lineinfile:
+      path: "/etc/postgresql/{{ timescaledb_pg_major }}/main/postgresql.conf"
+      regexp: '#?timescaledb.last_tuned*'
+      state: absent
+    changed_when: false
+
+  - name: TIMESCALEDB | Verify timescaledb-tune
+    shell: "md5sum /etc/postgresql/{{ timescaledb_pg_major }}/main/postgresql.conf | awk '{ print $1 }'"
+    register: autotune_pg_config_checksum
+    changed_when: pg_config_checksum.stdout != autotune_pg_config_checksum.stdout
+    notify:
+      - timescaledb pg restart
+
+- name: TIMESCALEDB | Add custom configuration to postgresql.conf
+  lineinfile:
+    path: "/etc/postgresql/{{ timescaledb_pg_major }}/main/postgresql.conf"
+    regexp: '#?{{ item.key }} =.*'
+    line: '{{ item.key }} = {{ item.value }}'
+  with_dict: "{{ timescaledb_pg_conf }}"
+  register: custom_configuration
+  notify:
+    - timescaledb pg restart
+
+- name: TIMESCALEDB | Flush handlers
+  meta: flush_handlers

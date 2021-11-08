@@ -1,0 +1,56 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: molecule/default/requirements.yml
+
+driver:
+  name: docker
+
+lint:
+  name: yamllint
+
+platforms:
+  - name: server1
+    hostname: server1
+    image: centos/systemd
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    command: /lib/systemd/systemd
+    privileged: true
+    pre_build_image: true
+    networks:
+      - name: shared
+        aliases: server1
+
+provisioner:
+  name: ansible
+  # XXX this controls `no-log` in auto-generated playbooks by the docker
+  # driver
+  log: true
+  become: True
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../:roles
+  options:
+    v: True
+    become: True
+  config_options:
+    defaults:
+      retry_files_enabled: false
+      stdout_callback: yaml
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: prepare.yml
+    converge: ../default/playbook.yml
+    side_effect: ../default/side_effect.yml
+  inventory:
+    links:
+      hosts: ../default/inventory/default
+      group_vars: ../default/group_vars/
+
+verifier:
+  name: testinfra
+  directory: ../default/tests
+  lint:
+    name: flake8

@@ -1,6 +1,11 @@
 [control]
-10.52.0.81 ansible_connection=local
+129.114.109.96 ansible_connection=local
+#159.65.60.19 ansible_connection=local
+#control-node ansible_host=143.198.156.176 ansible_user=root
 #control-node ansible_connection=local
+
+#[servers]
+#server_1 ansible_host=67.205.158.239 ansible_user=root
 
 [linux:vars]
 ansible_become=true
@@ -9,45 +14,19 @@ ansible_become_method='sudo'
 ansible_become_user='root'
 
 [centos]
-10.52.2.82
-#target-5
-
-10.52.3.13
-#target-6
+#129.114.109.118 #target-6
+#159.65.55.28 #target-5
 
 [ubuntu]
-10.52.3.3
-#target-1
+#159.65.60.26  #target-1
+#138.68.173.232
+#138.68.191.108
+#143.198.156.176
 
-10.52.0.180
-#target-2
-
-10.52.1.81
-#target-3
-
-10.52.3.193
-#target-4
-
-10.52.0.191
-#target-5
-
-[ps_testpoint]
-10.52.3.3
-
-[ps_toolkit]
-10.52.3.3
-
-[ps_archive]
-10.52.3.3
-
-[ps_maddash]
-10.52.0.180
-
-[ps_psconfig_publisher]
-10.52.0.180
-
-[ps_psconfig_web_admin]
-10.52.0.180
+129.114.108.217 #target-2
+129.114.108.152 #target-3
+129.114.109.219 #target-4
+#129.114.109.118 #target-7
 
 [linux:children]
 centos
@@ -56,7 +35,9 @@ ubuntu
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
-
+ansible_user=root
+#control-node ansible_host=138.68.10.107 ansible_user=root
+#server_1 ansible_host=67.205.158.239 ansible_user=root
 
 # Ex 1: Ungrouped hosts, specify before any group headers.
 

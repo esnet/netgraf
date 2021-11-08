@@ -1,0 +1,11 @@
+---
+apt_repo_to_add: []
+apt_repo_keys_to_add: []
+apt_repo_enable_apt_transport_https: False
+apt_repo_required_packages: "{{ __apt_repo_required_packages }}"
+
+# see https://www.devuan.org/os/releases
+apt_repo_codename_devuan_to_debian:
+  beowulf: buster
+  ascii: stretch
+  jessie: jessie

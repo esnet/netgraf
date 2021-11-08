@@ -1,0 +1,3 @@
+#/bin/sh
+export PGPASSWORD={{ timescaledb_pg_database_owner_password }}
+psql --host localhost --port 5432 --dbname {{ timescaledb_pg_database }} --user {{ timescaledb_pg_database_owner }} -c 'CALL prom_api.execute_maintenance();'

@@ -1,0 +1,16 @@
+---
+
+- name: PROMSCALE | Install
+  include: install.yml
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Configure
+  include: config.yml
+  tags:
+    - promscale_configure
+
+- name: PROMSCALE | Service
+  include: service.yml
+  tags:
+    - promscale_service

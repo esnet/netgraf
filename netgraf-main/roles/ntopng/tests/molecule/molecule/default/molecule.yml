@@ -1,0 +1,52 @@
+---
+dependency:
+  name: galaxy
+  options:
+    # XXX relative path to scenario directory does not work
+    # https://github.com/ansible/molecule/issues/1509
+    role-file: molecule/default/requirements.yml
+
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+
+lint:
+  name: yamllint
+
+platforms:
+  - name: server1
+    # box: trombik/ansible-ubuntu-18.04-amd64
+    # box: trombik/ansible-centos-7.4-x86_64
+    box: trombik/ansible-freebsd-12.0-amd64
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.21.200
+
+provisioner:
+  name: ansible
+  become: True
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../:roles
+  options:
+    v: True
+    become: True
+  config_options:
+    defaults:
+      retry_files_enabled: false
+      stdout_callback: yaml
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: playbook.yml
+    side_effect: side_effect.yml
+  inventory:
+    links:
+      hosts: inventory/default
+      group_vars: group_vars/
+
+verifier:
+  name: testinfra
+  directory: tests
+  lint:
+    name: flake8

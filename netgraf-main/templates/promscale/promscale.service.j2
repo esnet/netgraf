@@ -1,0 +1,24 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=promscale
+Documentation={{ promscale_documentation_link }}
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+PrivateTmp={{ promscale_private_tmp }}
+User={{ promscale_user }}
+Group={{ promscale_group }}
+RuntimeDirectory=promscale
+LimitNOFILE={{ promscale_max_files }}
+
+ExecStart={{ promscale_bin_path }}/{{ promscale_exec_name }} {% for option in promscale_options %}{% if option %}-{{ option }} {% endif %}{% endfor %}
+
+StandardOutput={{ promscale_log_output }}
+StandardError={{ promscale_log_output }}
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

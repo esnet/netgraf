@@ -1,2 +1,14 @@
 ---
-# defaults file for roles/ntopng
+
+ntopng_package: "{{ __ntopng_package }}"
+ntopng_service: "{{ __ntopng_service }}"
+ntopng_extra_packages: "{{ __ntopng_extra_packages }}"
+ntopng_user: "{{ __ntopng_user }}"
+ntopng_group: "{{ __ntopng_group }}"
+ntopng_extra_groups: []
+ntopng_config_dir: "{{ __ntopng_config_dir }}"
+ntopng_config_file: "{{ ntopng_config_dir }}/ntopng.conf"
+ntopng_config: ""
+ntopng_flags: ""
+ntopng_db_dir: "{{ __ntopng_db_dir }}"
+ntopng_log_dir: "{{ __ntopng_log_dir }}"

@@ -1,0 +1,18 @@
+---
+- name: TIMESCALEDB | Install
+  import_tasks: install.yml
+  tags:
+    - timescaledb_install
+
+- name: TIMESCALEDB | Configure
+  import_tasks: config.yml
+  tags:
+    - timescaledb_configure
+
+- name: TIMESCALEDB | Flush handlers
+  meta: flush_handlers
+
+- name: TIMESCALEDB | Setup timescaledb
+  import_tasks: config_timescaledb.yml
+  tags:
+    - timescaledb_setup

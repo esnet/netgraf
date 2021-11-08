@@ -1,0 +1,21 @@
+---
+
+- name: PROMSCALE | Copy Daemon script
+  template:
+    src: promscale.service.j2
+    dest: /etc/systemd/system/promscale.service
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart promscale
+  tags:
+    - promscale_service
+
+- name: PROMSCALE | Configuring service
+  systemd:
+    name: promscale
+    state: "{{ promscale_service_state }}"
+    enabled: "{{ promscale_service_enabled }}"
+    daemon_reload: yes
+  tags:
+    - promscale_service

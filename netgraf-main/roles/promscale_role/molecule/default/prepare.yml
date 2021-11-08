@@ -1,0 +1,6 @@
+---
+- name: Prepare
+  hosts: promscale_group
+  roles:
+    - name: postgresql
+    - name: timescaledb

@@ -1,0 +1,25 @@
+---
+
+- name: Install ntopng_extra_packages
+  pkgng:
+    name: "{{ ntopng_extra_packages }}"
+    state: present
+
+- name: Install ntopng_package
+  pkgng:
+    name: "{{ ntopng_package }}"
+    state: present
+
+- name: Enable ntopng_service
+  service:
+    name: "{{ ntopng_service }}"
+    enabled: yes
+
+- name: "Create /etc/rc.conf.d/{{ ntopng_service }}"
+  template:
+    src: FreeBSD.rcd.j2
+    dest: "/etc/rc.conf.d/{{ ntopng_service }}"
+    mode: 0644
+    validate: sh -n %s
+  notify:
+    - Restart ntopng_service

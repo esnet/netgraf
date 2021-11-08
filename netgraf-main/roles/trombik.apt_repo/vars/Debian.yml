@@ -1,0 +1,4 @@
+---
+__apt_repo_required_packages:
+  - gnupg
+  - ca-certificates

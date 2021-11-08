@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install required packages
+      raw: yum install -y python sudo yum-plugin-ovl bash rsyslog
+      become: false
+      changed_when: false

@@ -1,0 +1,19 @@
+---
+
+- name: Install ntopng_extra_packages
+  openbsd_pkg:
+    name: "{{ ntopng_extra_packages }}"
+    state: present
+
+- name: Install ntopng_package
+  openbsd_pkg:
+    name: "{{ ntopng_package }}"
+    state: present
+
+- name: Enable ntopng_service
+  service:
+    name: "{{ ntopng_service }}"
+    arguments: "{{ ntopng_flags }}"
+    enabled: yes
+  notify:
+    - Restart ntopng_service

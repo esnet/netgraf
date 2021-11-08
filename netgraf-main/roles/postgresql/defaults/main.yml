@@ -1,0 +1,109 @@
+---
+
+pg_major_release: 12
+
+pg_user: postgres
+pg_group: postgres
+
+pg_config_templates_path: "{{ ansible_os_family }}/pg-{{ pg_major_release }}"
+pg_systemd_templates_path: "{{ ansible_os_family }}/systemd"
+
+pg_port: 5432
+pg_service_state: started
+pg_service_enabled: true
+# Set to restart postgresql if you need a complete restart of the service i.e. changing listeners config
+pg_handler_on_config_change: "reload postgresql"
+# Only for Debian 9 env
+# Vars for environment config file:
+# pg_environment_vars:
+#   TEST1: test1val
+#   TEST2: test2val
+# Vars for startup config file:
+pg_automatic_startup_configuration: auto
+# Vars for pg_ctl config file:
+# pg_ctl_options: --option1 --option2
+
+# Common config variables:
+# Vars for pg_ident config file:
+# pg_user_mapping:
+#   - "omicron  bryanh  bryanh"
+#   - "omicron  robert  bob"
+# pg_hba_declarations:
+#   - "host alicedb alice 192.168.1.0/24  md5"
+#   - "host bobdb bob 192.168.1.0/24  md5"
+#
+
+pg_os_tuning: true
+
+# Usually you must review the next kernel parameters.
+# Because postgresql recommendations, see:
+# https://www.postgresql.org/docs/current/kernel-resources.html
+#
+# Because dirty pages control, see:
+# Low write performance on SLES 11/12 servers with large RAM
+# https://www.suse.com/es-es/support/kb/doc/?id=7010287
+#
+# THIS IS AN EXAMPLE configuration. The real configuration depends
+# on your own host characteristics:
+#
+# pg_os_tuning_parameters:
+#   fs.file-max: 6598622
+#   kernel.sem: "250 32000 256 256"
+#   kernel.shmmax: 17179869184
+#   kernel.shmall: 4194304
+#   vm.dirty_bytes: 157286400
+#   vm.dirty_background_bytes: 314572800
+#   vm.overcommit_memory: 2
+#   vm.nr_hugepages: 3170
+
+pg_users_no_log: true  # if it's set to false the password will be printed after command execution (insecure)
+
+# Users
+pg_users: []
+# - ca_cert: # defaults to not set
+#   conn_limit: # defaults to not set
+#   db: # defaults to not set
+#   encrypted: # defaults to not set
+#   expires: # defaults to not set
+#   fail_on_user: # defaults to not set
+#   groups: # defaults to not set
+#   login_host: # defaults to localhost
+#   login_password: # defaults to not set
+#   login_unix_socket: # defaults to '/var/run/postgresql'
+#   login_user: # defaults to '{{ pg_user }}'
+#   name: # REQUIRED
+#   no_password_changes: # defaults to not set
+#   password: # defaults to not set
+#   port: # defaults to not set
+#   priv: # defaults to not set
+#   role_attr_flags: # defaults to not set
+#   session_role: # defaults to not set
+#   ssl_mode: # defaults to not set
+#   state: # defaults to 'present'
+
+# Databases
+pg_databases: []
+# - ca_cert: # defaults to not set
+#   conn_limit: # defaults to not set
+#   encoding: # defaults to 'UTF-8'
+#   lc_collate: # defaults to not set
+#   lc_ctype: # defaults to not set
+#   login_host: # defaults to 'localhost'
+#   login_password: # defaults to not set
+#   login_unix_socket: # defaults to '/var/run/postgresql'
+#   login_user: # defaults to '{{ pg_user }}'
+#   maintenance_db: # defaults to not set
+#   name: # REQUIRED
+#   owner: # defaults to '{{ pg_user }}'
+#   port: # defaults to not set
+#   session_role: # defaults to not set
+#   ssl_mode: # defaults to not set
+#   state: # defaults to 'present'
+#   tablespace: # defaults to not set
+#   target: # defaults to not set
+#   target_opts: # defaults to not set
+#   template: # defaults to 'template0'
+
+# Custom options for extensions.
+pg_custom_options: {}
+#   custom_option_key: custom_option_value

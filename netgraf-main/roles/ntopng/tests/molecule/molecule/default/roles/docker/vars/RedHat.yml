@@ -1,0 +1,6 @@
+---
+docker_packages:
+  - iputils
+  - iproute
+docker_package_rsyslog: rsyslog
+docker_service_rsyslog: rsyslog

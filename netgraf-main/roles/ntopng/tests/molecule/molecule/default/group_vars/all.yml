@@ -1,0 +1,8 @@
+---
+
+os_docker_extra_packages:
+  FreeBSD: []
+  OpenBSD: []
+  Debian: []
+  RedHat: []
+docker_extra_packages: "{{ os_docker_extra_packages[ansible_os_family] }}"

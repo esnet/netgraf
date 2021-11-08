@@ -1,0 +1,68 @@
+# Molecule managed
+
+---
+file:
+  {{ pg_data_directory }}:
+    exists: true
+    filetype: directory
+    owner: {{ pg_user }}
+    group: {{ pg_group }}
+  {{ pg_config_directory }}:
+    exists: true
+    filetype: directory
+    owner: {{ pg_user }}
+    group: {{ pg_group }}
+  {{ pg_log_directory }}:
+    exists: true
+    filetype: directory
+    owner: {{ pg_user }}
+    group: {{ pg_group }}
+{% for item in pg_config_files %}
+{{ pg_config_directory }}/{{ item }}:
+    exists: true
+    owner: {{ pg_user }}
+    group: {{ pg_group }}
+    filetype: file
+{% endfor %}
+
+service:
+  {{ pg_service }}:
+    enabled: true
+    running: true
+port:
+  tcp:{{ pg_port }}:
+    listening: true
+
+command:
+  pgversion:
+    exit-status: 0
+    exec: "{{ pg_usr_path }}/bin/postgres -V"
+    stdout:
+      - "postgres (PostgreSQL) {{ pg_major_release }}"
+    stderr: []
+    timeout: 10000
+    skip: false
+  pgisready:
+    exit-status: 0
+    exec: "{{ pg_usr_path }}/bin/pg_isready"
+    stdout:
+      - "accepting connections"
+    stderr: []
+    timeout: 10000
+    skip: false
+  users:
+    exit-status: 0
+    exec: runuser -l {{ pg_user }} -c '{{ pg_usr_path }}/bin/psql -c "\du"'
+    stdout:
+      - "{{ pg_users[0].name }}"
+    stderr: []
+    timeout: 10000
+    skip: false
+  databases:
+    exit-status: 0
+    exec: runuser -l {{ pg_user }} -c '{{ pg_usr_path }}/bin/psql -c "\l"'
+    stdout:
+      - "{{ pg_databases[0].name }}"
+    stderr: []
+    timeout: 10000
+    skip: false

@@ -1,0 +1,5 @@
+[server]
+server1
+
+[all:children]
+server

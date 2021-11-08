@@ -1,0 +1,28 @@
+---
+
+- name: PostgreSQL | Manage Databases
+  postgresql_db:
+    ca_cert: "{{ item.cacert | default(omit) }}"
+    conn_limit: "{{ item.conn_limit | default(omit) }}"
+    encoding: "{{ item.encoding | default('UTF-8') }}"
+    lc_collate: "{{ item.lc_collate | default(omit) }}"
+    lc_ctype: "{{ item.lc_ctype | default(omit) }}"
+    login_host: "{{ item.login_host | default('localhost') }}"
+    login_password: "{{ item.login_password | default(omit) }}"
+    login_unix_socket: "{{ item.login_unix_socket | default('/var/run/postgresql') }}"
+    login_user: "{{ item.login_user | default(pg_user) }}"
+    maintenance_db: "{{ item.maintenance_db | default(omit) }}"
+    name: "{{ item.name }}"
+    owner: "{{ item.owner | default(pg_user) }}"
+    port: "{{ item.port | default(omit) }}"
+    session_role: "{{ item.session_role | default(omit) }}"
+    ssl_mode: "{{ item.ssl_mode | default(omit) }}"  # noqa 206
+    state: "{{ item.state | default('present') }}"
+    tablespace: "{{ item.tablespace | default(omit) }}"  # noqa 206
+    target: "{{ item.target | default(omit) }}"  # noqa 206
+    target_opts: "{{ item.target_opts | default(omit) }}"  # noqa 206
+    template: "{{ item.template | default('template0') }}"
+  with_items: "{{ pg_databases }}"
+  become: true
+  become_user: "{{ pg_user }}"
+  tags: postgresql,postgresql-config,postgresql-manage-databases

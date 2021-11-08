@@ -1,0 +1,27 @@
+---
+
+- name: Install ntopng_extra_packages
+  apt:
+    name: "{{ ntopng_extra_packages }}"
+    state: present
+
+- name: Install ntopng_package
+  apt:
+    name: "{{ ntopng_package }}"
+    state: present
+
+- name: Enable ntopng_service
+  service:
+    name: "{{ ntopng_service }}"
+    enabled: yes
+
+- name: "Create /etc/default/{{ ntopng_service }}"
+  template:
+    src: Debian.default.j2
+    dest: "/etc/default/{{ ntopng_service }}"
+    mode: 0644
+    # keep the original copy in case you need the defaults in it
+    backup: yes
+    validate: sh -n %s
+  notify:
+    - Restart ntopng_service

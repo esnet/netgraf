@@ -1,0 +1,46 @@
+---
+
+service:
+  promscale:
+    enabled: true
+    running: true
+
+process:
+  promscale:
+    running: true
+
+user:
+  promscale:
+      exists: true
+      groups:
+        - promscale
+      shell: /usr/sbin/nologin
+group:
+  promscale:
+    exists: true
+
+file:
+  /opt/promscale:
+    owner: promscale
+    group: promscale
+    exists: true
+    filetype: directory
+  /opt/promscale/bin:
+    owner: promscale
+    group: promscale
+    exists: true
+    filetype: directory
+  /opt/promscale/prom-execute-maintenance.sh:
+    exists: true
+  /var/log/promscale/promscale.log:
+    exists: true
+
+http:
+  http://localhost:9201/write:
+    status: 200
+    request-headers:
+      - "Content-Type: application/json"
+    request-body: '{"labels":{"__name__": "cpu_usage"},"samples":[[1577836800000, 100],[1577836801000, 99],[1577836802000, 98]]}'
+    method: POST
+  http://localhost:9201/api/v1/labels:
+    status: 200

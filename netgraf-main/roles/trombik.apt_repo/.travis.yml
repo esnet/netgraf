@@ -1,0 +1,117 @@
+---
+os: linux
+dist: focal
+language: python
+python: "3.6"
+
+# Install ansible
+addons:
+  apt:
+    update: true
+    packages:
+      - python3-pip
+      - curl
+cache: false
+#  directories:
+#    - $HOME/.rvm/
+#    - $HOME/.bundler/
+#    - $HOME/.cache/pip/
+#  pip: true
+
+env:
+  - PLATFORM=freebsd
+  - PLATFORM=openbsd
+  - PLATFORM=centos
+  - PLATFORM=ubuntu
+
+before_install:
+  # XXX update RubyGem to fix build in Travis CI. when ruby 2.6.3 or later is
+  # available in travis environment, this can be removed.
+  # see details at:
+  # https://bundler.io/blog/2019/05/14/solutions-for-cant-find-gem-bundler-with-executable-bundle.html
+  - yes | gem update --system --force
+  - gem install bundler
+  - wget https://releases.hashicorp.com/vagrant/2.2.9/vagrant_2.2.9_x86_64.deb
+  - sudo dpkg -i vagrant_2.2.9_x86_64.deb
+  - vagrant --version
+
+  # for virtualbox
+  - sudo apt-get install "linux-headers-`uname -r`"
+  - wget -q https://github.com/trombik/ansible-role-sensu_go_backend/releases/download/1.4.0/oracle_vbox_2016.asc -O - | sudo apt-key add -
+  - sudo add-apt-repository -y "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib"
+  - sudo apt-get update
+  - sudo apt-get install virtualbox-6.1
+
+install:
+  # Install ansible 2.9 because 2.10 changed its options, ignores "src" in
+  # requirements.yml.
+  - pip install 'ansible<2.10' yamllint molecule docker
+
+  # Check versions
+  - ansible --version
+  - molecule --version
+
+  # Create ansible.cfg with correct roles_path
+  - mkdir -p extra_roles
+  - printf '[defaults]\nstdout_callback = yaml\nroles_path=../:extra_roles' >ansible.cfg
+
+script:
+  # See if the repo is private
+  - if curl --silent --output /dev/null --dump-header - "https://github.com/${TRAVIS_REPO_SLUG}" | grep "Status:[[:space:]]*404"; then touch .private_repo; fi
+
+  # Download depended roles
+  - if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml -p extra_roles; fi
+  - if [ -f requirements.yml ]; then ansible-galaxy collection install -r requirements.yml -p collections; fi
+
+  # Basic role syntax check
+  #
+  # If it is a private repo, it _usually_ has secret information, or encrypted
+  # file. As the information security policy does not allow decryption key to
+  # be transfered to third-party, encrypted files cannot be decrypted in travis
+  # CI environment. Skip syntax check when it is a private repo.
+  #
+  - "if [ ! -f .private_repo ]; then ANSIBLE_COLLECTIONS_PATHS=${PWD}/collections ansible-playbook tests/travisci/tests.yml -i tests/travisci/inventory --syntax-check; fi"
+
+  # download the QA scripts
+  - git clone https://github.com/trombik/qansible.git
+
+  # checkout the latest release
+  - ( cd qansible && git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) )
+
+  # install it
+  - ( cd qansible && bundle install --path ${HOME}/.bundler --with "test" && bundle exec rake build && gem install pkg/*.gem )
+  - rm -rf qansible
+
+  # git complains if user and email are not set
+  - git config --global user.name "Your Name"
+  - git config --global user.email "you@example.com"
+
+  # surpress a warning from `qansible qa
+  - touch .kitchen.local.yml
+
+  # export PATH
+  - export PATH="${PATH}:`rvm gemdir`/bin"
+
+  # bundle up because rubocop is installed via Gemfile
+  - bundle install --path ${HOME}/.bundler
+
+  # run rubocop
+  - bundle exec rubocop
+
+  # run yamllint
+  - yamllint -c .yamllint.yml .
+
+  # run the QA test
+  # - qansible qa
+  - export VAGRANT_PROVIDER=virtualbox
+  - bundle exec kitchen list
+  - |
+    platforms=`bundle exec kitchen list --json  | jq ".[] | select(.instance | match(\"${PLATFORM}\")).instance" | tr -d '"'`
+    if [ x"${platforms}" != "x" ]; then
+      for i in ${platforms}; do
+        bundle exec kitchen test $i || exit 1
+      done
+    fi
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/

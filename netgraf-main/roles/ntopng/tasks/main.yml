@@ -1,40 +1,54 @@
 ---
-# tasks file for roles/ntopng
-- name: Update apt cache before installing any pre-reqs
-  apt:
-    update_cache: true
 
-- name: Install the required packages
-  apt:
-    name: "{{ req_packages }}"
-    state: present
+- name: "Include vars/{{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Add the universe repo
-  apt_repository:
-    repo: deb http://archive.ubuntu.com/ubuntu focal universe
-    state: present
-    update_cache: true
+- name: "Include install-{{ ansible_os_family }}.yml"
+  include: "install-{{ ansible_os_family }}.yml"
 
-- name: Install ntop repo
-  apt:
-    deb: https://packages.ntop.org/apt/20.04/all/apt-ntop.deb
+- name: "Create {{ ntopng_config_dir }}"
+  file:
+    path: "{{ ntopng_config_dir }}"
+    state: directory
 
-- name: Update cache after adding new repos
-  apt:
-    update_cache: true
-
-- name: Install ntopng and required packages
-  apt:
-    name: "{{ ntop_packages }}"
-    state: present
-
-- name: Configure ntopng
+- name: "Create {{ ntopng_config_file }}"
   template:
     src: ntopng.conf.j2
-    dest: /etc/ntopng/ntopng.conf
+    dest: "{{ ntopng_config_file }}"
+  notify:
+    - Restart ntopng_service
 
-- name: Start and enable ntopng
+- name: "Create {{ ntopng_config_file }}"
+  template:
+    src: ntopng.conf.j2
+    dest: "/etc/ntopng.conf"
+  notify:
+    - Restart ntopng_service
+
+- name: "Add ntopng_user to ntopng_extra_groups"
+  user:
+    name: "{{ ntopng_user }}"
+    append: yes
+    create_home: no
+    groups: "{{ ntopng_extra_groups }}"
+
+- name: Create ntopng_log_dir
+  file:
+    path: "{{ ntopng_log_dir }}"
+    owner: "{{ ntopng_user }}"
+    group: "{{ ntopng_group }}"
+    mode: 0750
+    state: directory
+
+- name: Create ntopng_db_dir
+  file:
+    path: "{{ ntopng_db_dir }}"
+    owner: "{{ ntopng_user }}"
+    group: "{{ ntopng_group }}"
+    mode: 0750
+    state: directory
+
+- name: Start ntopng_service
   service:
-    name: ntopng
+    name: "{{ ntopng_service }}"
     state: started
-    enabled: true

@@ -1,0 +1,101 @@
+---
+
+- name: PROMSCALE | Ensure promscale group
+  group:
+    name: "{{ promscale_group }}"
+    system: yes
+    state: present
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Ensure promscale user
+  user:
+    name: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    system: yes
+    shell: /usr/sbin/nologin
+    createhome: no
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Ensure skeleton paths
+  file:
+    dest: "{{ item }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    state: directory
+  with_items:
+    - "{{ promscale_skeleton_paths }}"
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Ensure skeleton log paths
+  file:
+    dest: "{{ promscale_log_path }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    state: directory
+  when: promscale_log_file is defined
+  tags:
+    - promscale_install
+
+# In the current version, there isn't a parameter like --version to check promscale version.
+- name: PROMSCALE | Check promscale version
+  command: "ls {{ promscale_download_path }}"
+  register: promscale_check
+  changed_when: false
+  ignore_errors: true
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Find previous binaries
+  find:
+    paths: "{{ promscale_download_path }}"
+    patterns: "promscale*"
+    use_regex: true
+  register: wildcard_files_to_delete
+  when: promscale_force_reinstall or promscale_check is failed or promscale_release_name not in promscale_check.stdout
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Remove previous binaries
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ wildcard_files_to_delete.files }}"
+  when: promscale_force_reinstall or promscale_check is failed or promscale_release_name not in promscale_check.stdout
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Download binary
+  get_url:
+    url: "{{ promscale_url }}"
+    dest: "{{ promscale_download_path }}/{{ promscale_release_name }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    mode: 0755
+  when: promscale_force_reinstall or promscale_check is failed or promscale_release_name not in promscale_check.stdout
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Copy downloaded binary
+  copy:
+    src: "{{ promscale_download_path }}/{{ promscale_release_name }}"
+    dest: "{{ promscale_bin_path }}/{{ promscale_exec_name }}"
+    owner: "{{ promscale_user }}"
+    group: "{{ promscale_group }}"
+    remote_src: True
+    mode: 0755
+  when: promscale_force_reinstall or promscale_check is failed or promscale_release_name  not in promscale_check.stdout
+  notify: restart promscale
+  tags:
+    - promscale_install
+
+- name: PROMSCALE | Link binary
+  file:
+    src: "{{ promscale_bin_path }}/{{ promscale_exec_name }}"
+    dest: "/usr/bin/{{ promscale_exec_name }}"
+    state: link
+  when: promscale_force_reinstall or promscale_check is failed or promscale_release_name not in promscale_check.stdout
+  tags:
+    - promscale_install

@@ -1,8 +1,0 @@
----
-- template:
-    src: netdata.conf.j2
-    dest: /etc/netdata/netdata.conf
-    owner: root
-    group: root
-    mode: u=wrx,g=rx,o=r,+x
-  notify: Restart Netdata

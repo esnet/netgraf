@@ -1,0 +1,17 @@
+---
+- name: TIMESCALEDB | Be sure timescaledb key is present
+  apt_key:
+    url: "{{ timescaledb_deb_key }}"
+    state: present
+
+- name: TIMESCALEDB | Be sure timescaledb repo packages configured
+  apt_repository:
+    repo: "{{ timescaledb_deb_repo }}"
+    state: present
+    filename: "timescaledb"
+
+- name: TIMESCALEDB | Be sure timescaledb packages are installed
+  apt:
+    name: "{{ timescaledb_release_name }}"
+    state: present
+    update_cache: true

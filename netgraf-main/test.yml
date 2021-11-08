@@ -1,0 +1,12 @@
+- name: Install Netgraf all-in-one
+  hosts: control
+  user: root
+  become: yes
+
+- name: install ntopng and it's dependencies
+  hosts: centos
+  become: yes
+  roles:
+   - trombik.apt_repo
+   - geerlingguy.redis
+   - ntopng

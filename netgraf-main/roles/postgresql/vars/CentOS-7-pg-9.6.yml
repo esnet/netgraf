@@ -1,0 +1,9 @@
+---
+__pg_setup_command: "{{ pg_usr_path }}/bin/postgresql{{ pg_basename_version }}-setup"
+
+__pg_packages:
+   - "{{ pg_basename }}"
+   - "{{ pg_basename }}-server"
+   - "{{ pg_basename }}-contrib"
+   - "{{ pg_basename }}-libs"
+   - "{{ pg_basename }}-devel"
