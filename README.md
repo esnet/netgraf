@@ -21,16 +21,21 @@ Here we present NetGraf: An end-to-end learning monitoring system that utilizes 
 - Video
 
 ## Installation Guide
-Current installation of NetGraf has been tested on Python 3.6. This is Optional, but to get started, we recommend to first setup a clean Python environment for your project with at least Python 3.6 using any of your favorite tool forinstance, ([conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html "conda-env"), [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/) with or without [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)).
+Please ensure you have the IP addresses of the network devices, switches, routers ,servers, systems or hosts you intend to monitor. Netgraf has been tested on Chameleon cloud and Digital ocean instances. To get started, please feel free to use any enviroment or provider of your choice.
+
 
 ## Installation Pre-requisite
 
-* Create a set of Virtual machines(VMs) or network devices that can communicate and pingable to each other.
+* Create a set of Virtual Machine(VM) Instances or network devices that you intend to monitor, and ensure they can communicate and pingable to each other.
 * For example you can spin up VMs Using Chameleon Cloud, Amazon EC2, Digital Ocean or any other cloud provider of your choice. 
 * To reserve a node and lauch an instance on Chameleon, follow the steps provided [here](https://chameleoncloud.readthedocs.io/en/latest/getting-started/index.html#reserving-a-node).
-* Make one your VMs or network device as your Controller Node, and then others as your Target Nodes. 
+* Make one of your host or network devices your Control Node, and then others your Target Nodes.
 * Modify your hosts file to match the number of intended Target hosts by specifying the IP addresses.
-* Depending on your OS, Install ansible using the steps provided [here](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+* Depending on your Controller node OS, Install ansible using the steps provided [here](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+
+Ensure the devices or host machines are pingable to each other by creating a public key using the instruction [here](https://www.ssh.com/academy/ssh/keygen#what-is-ssh-keygen?), and then copy over your keys to your target nodes and using:
+
+	ssh-copy-id user@0.0.0.0 
 
 Once the installtion is complete and your environment is all set up, check the version of your ansible:
 
@@ -44,7 +49,7 @@ Clone the repository accordingly from a terminal whilst in your home directory w
     cd netgraf-main 
 
 
-Test the connectivity between your nodes(Controller and Target Nodes):
+Test the connectivity between your nodes(Control Node and Target Nodes):
 
     ansible all -m ping 
 
