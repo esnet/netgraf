@@ -31,9 +31,9 @@ Please ensure you have the IP addresses of the network devices, switches, router
 * To reserve a node and lauch an instance on Chameleon, follow the steps provided [here](https://chameleoncloud.readthedocs.io/en/latest/getting-started/index.html#reserving-a-node).
 * Make one of your host or network devices your Control Node, and then others your Target Nodes.
 * Modify your hosts file to match the number of intended Target hosts by specifying the IP addresses.
-* Depending on your Controller node OS, Install ansible using the steps provided [here](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+* Depending on your Controller node OS, Install ansible using the steps provided [here](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-with-pip).
 
-Ensure the devices or host machines are pingable to each other by creating a public key using the instruction [here](https://www.ssh.com/academy/ssh/keygen#what-is-ssh-keygen?), and then copy over your keys to your target nodes and using:
+Ensure the devices or host machines are pingable to each other by creating a public key using the instruction [here](https://www.ssh.com/academy/ssh/keygen#what-is-ssh-keygen?), and then copy over your keys to your target nodes using:
 
 	ssh-copy-id user@0.0.0.0 
 
