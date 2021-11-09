@@ -46,7 +46,7 @@ Clone the repository accordingly from a terminal whilst in your home directory w
 
     git clone https://github.com/esnet/netgraf.git
 
-    cd netgraf-main 
+    cd netgraf 
 
 
 Test the connectivity between your nodes(Control Node and Target Nodes):
@@ -58,7 +58,7 @@ Test the connectivity between your nodes(Control Node and Target Nodes):
 
 Install NetGraf using one push button:
 
-    ansible-playbook netplaybook.yaml 
+    ansible-playbook playbook.yml 
 
 
 Once the NetGraf installtion is complete, check the PLAY RECAP for any errors.
