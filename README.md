@@ -46,7 +46,7 @@ Clone the repository accordingly from a terminal whilst in your home directory w
 
     git clone https://github.com/esnet/netgraf.git
 
-    cd netgraf 
+    cd netgraf-main
 
 
 Test the connectivity between your nodes(Control Node and Target Nodes):
