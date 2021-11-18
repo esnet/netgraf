@@ -60,15 +60,44 @@ Install NetGraf using one push button:
 
     ansible-playbook playbook.yml 
 
-
-Once the NetGraf installtion is complete, check the PLAY RECAP for any errors.
-
- 
+    time ansible-playbook playbook.yml -vvv
 
 
-Please feel free go over the example and tutorial notebooks in 
-the [examples](https://github.com/esnet/daphne/tree/master/NetGraf-Ansible) directory.
+Once the NetGraf installtion is complete, view the PLAY RECAP for any errors and check the prometheus and grafana status.
 
+    sudo systemctl status prometheus
+
+ 	sudo systemctl status grafana
+
+
+To check the log if the collected metrics is streaming into the central database:
+
+    cd /var/log/promscale/
+  
+    tail -n 30 -f promscale.log promscale.log 
+
+To check login to the Central database:
+
+	sudo su postgres -c psql
+
+	\l+
+
+	\c timescaledb_db
+
+	select * from  metric;
+
+	\q
+
+	\exit
+
+To extract specific network related metrics and store them into the DB for analysis:
+
+
+	 bash monitoring_script.sh
+
+To export collected data to a remote location using [rlcone](https://rclone.org/remote_setup/) - Google
+
+	rclone copy /opt/monitor_metrics netgraf_metrics:/metrics_data/ -v
 
 ## Network and System Monitoring tools
 
@@ -83,7 +112,10 @@ Currently, NetGraf library supports the following Monitoring tools:
 * perfSONAR
 * Confluo
 * zabbix
-* iperf3
+* node_exporter
+* grafana
+
+
 
 
 ## Features
