@@ -70,6 +70,17 @@ Once the NetGraf installtion is complete, view the PLAY RECAP for any errors and
  	sudo systemctl status grafana
 
 
+To view all the active target nodes and metrics:
+
+     http://159.65.60.19:9090/targets
+
+     http://159.65.60.19:9090/graph
+
+To view the all-in-one NetGraf Dashboard:
+
+     http://159.65.60.19:3000
+
+
 To check the log if the collected metrics is streaming into the central database:
 
     cd /var/log/promscale/
