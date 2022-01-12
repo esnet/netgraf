@@ -110,6 +110,14 @@ To export collected data to a remote location using [rlcone](https://rclone.org/
 
 	rclone copy /opt/monitor_metrics netgraf_metrics:/metrics_data/ -v
 
+
+
+To run the Machine learning component, change to the ml-pipepine directory and follow the instructions [here](https://github.com/esnet/netgraf/tree/main/ml-pipeline/)
+
+    cd ml-pipeline
+
+
+
 ## Network and System Monitoring tools
 
 Currently, NetGraf library supports the following Monitoring tools: 
