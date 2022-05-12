@@ -70,13 +70,13 @@ Once the NetGraf installtion is complete, view the PLAY RECAP for any errors and
  	sudo systemctl status grafana
 
 
-To view all the active target nodes and metrics:
+To view all the active target nodes and metrics, type the following below. Please note that our controller IP address is 159.65.60.19. Please refer to our environment setup and IP address assignment [here](https://github.com/esnet/netgraf/blob/main/hosts):
 
      http://159.65.60.19:9090/targets
 
      http://159.65.60.19:9090/graph
 
-To view the all-in-one NetGraf Dashboard:
+To view the all-in-one NetGraf Dashboard on the controller node:
 
      http://159.65.60.19:3000
 
