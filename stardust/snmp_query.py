@@ -1,6 +1,6 @@
 # Code for reading Data from Stardust API, then saving as a csv and storing in a database as a time series data
-# Replace this "https://netpred-8a3a5-default-rtdb.firebaseio.com" on line 85, with your link generated form your firebase account.
-# comment out the last two lines if only onluy want to save and csv you don't want to store in firebase database
+# Replace this "https://netpred-8a3a5-default-rtdb.firebaseio.com" on line 85, with your link generated from your firebase account.
+# comment out the last two lines if you want to save to csv and don't want to store in firebase database.
 
 import datetime
 import pandas as pd
